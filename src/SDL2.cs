@@ -4865,6 +4865,33 @@ namespace SDL2
 			return result;
 		}
 
+
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern SDL_bool SDL_HasPrimarySelectionText();
+
+		[DllImport(nativeLibName, EntryPoint = "SDL_GetPrimarySelectionText", CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr INTERNAL_SDL_GetPrimarySelectionText();
+		public static string SDL_GetPrimarySelectionText()
+		{
+			return UTF8_ToManaged(INTERNAL_SDL_GetPrimarySelectionText(), true);
+		}
+
+		[DllImport(nativeLibName, EntryPoint = "SDL_SetPrimarySelectionText", CallingConvention = CallingConvention.Cdecl)]
+		private static extern unsafe int INTERNAL_SDL_SetPrimarySelectionText(
+			byte* text
+		);
+		public static unsafe int SDL_SetPrimarySelectionText(
+			string text
+		)
+		{
+			byte* utf8Text = Utf8EncodeHeap(text);
+			int result = INTERNAL_SDL_SetPrimarySelectionText(
+				utf8Text
+			);
+			Marshal.FreeHGlobal((IntPtr) utf8Text);
+			return result;
+		}
+
 		#endregion
 
 		#region SDL_events.h
